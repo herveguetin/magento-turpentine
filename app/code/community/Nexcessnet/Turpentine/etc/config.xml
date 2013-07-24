@@ -358,6 +358,25 @@
                 </turpentine_esi>
             </updates>
         </layout>
+        <events>
+            <!-- Add and remove "logged_in" cookie on customer login and logout -->
+            <customer_login>
+                <observers>
+                    <turpentine_customer_login>
+                        <class>turpentine/observer_varnish</class>
+                        <method>customerLogin</method>
+                    </turpentine_customer_login>
+                </observers>
+            </customer_login>
+            <customer_logout>
+                <observers>
+                    <turpentine_customer_logout>
+                        <class>turpentine/observer_varnish</class>
+                        <method>customerLogout</method>
+                    </turpentine_customer_logout>
+                </observers>
+            </customer_logout>
+        </events>
     </frontend>
     <admin>
         <routers>

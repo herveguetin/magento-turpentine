@@ -92,4 +92,24 @@ class Nexcessnet_Turpentine_Model_Observer_Varnish extends Varien_Event_Observer
             }
         }
     }
+
+    /**
+     * Add cookie on customer login
+     *
+     * @return null
+     */
+    public function customerLogin()
+    {
+        Mage::getModel('core/cookie')->set('logged_in', 1);
+    }
+
+    /**
+     * Remove cookie on customer logout
+     *
+     * @return null
+     */
+    public function customerLogout()
+    {
+        Mage::getModel('core/cookie')->delete('logged_in');
+    }
 }
