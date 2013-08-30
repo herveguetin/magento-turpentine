@@ -73,6 +73,14 @@
                 <force_static>1</force_static>
                 <exts>css,js,jpe?g,png,gif,ico,swf</exts>
             </static>
+            <private_esi>
+                <enable>1</enable>
+                <!-- Do not indent CDATA content -->
+                <routes><![CDATA[
+catalog/category/view
+catalog/product/view
+                ]]></routes>
+            </private_esi>
         </turpentine_vcl>
     </default>
     <global>
@@ -161,7 +169,6 @@
                     </turpentine_varnish_http_response_send_before>
                 </observers>
             </http_response_send_before>
-
             <admin_system_config_changed_section_turpentine_varnish>
                 <observers>
                     <turpentine_varnish_admin_system_config_changed_section_turpentine_varnish>
@@ -359,23 +366,23 @@
             </updates>
         </layout>
         <events>
-            <!-- Add and remove "logged_in" cookie on customer login and logout -->
-            <customer_login>
+            <!-- Manage private_esi_cookie that enables the use of private ESI -->
+            <controller_action_predispatch>
                 <observers>
-                    <turpentine_customer_login>
+                    <turpentine_add_private_esi_cookie>
                         <class>turpentine/observer_varnish</class>
-                        <method>customerLogin</method>
-                    </turpentine_customer_login>
+                        <method>addPrivateEsiCookie</method>
+                    </turpentine_add_private_esi_cookie>
                 </observers>
-            </customer_login>
-            <customer_logout>
+            </controller_action_predispatch>
+            <controller_action_layout_render_before>
                 <observers>
-                    <turpentine_customer_logout>
+                    <turpentine_add_private_esi_cookie_block>
                         <class>turpentine/observer_varnish</class>
-                        <method>customerLogout</method>
-                    </turpentine_customer_logout>
+                        <method>addPrivateEsiCookieBlock</method>
+                    </turpentine_add_private_esi_cookie_block>
                 </observers>
-            </customer_logout>
+            </controller_action_layout_render_before>
         </events>
     </frontend>
     <admin>

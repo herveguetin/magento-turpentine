@@ -176,4 +176,50 @@ class Nexcessnet_Turpentine_Helper_Varnish extends Mage_Core_Helper_Abstract {
     public function shouldDisplayNotice() {
         return $this->getVarnishEnabled() && $this->isBypassEnabled();
     }
+
+    /**
+     * Check if we must toggle private ESI cookie
+     *
+     * @return bool
+     */
+    public function isPrivateEsiAction()
+    {
+        if(!Mage::getStoreConfigFlag('turpentine_vcl/private_esi/enable')) {
+            return true;
+        }
+
+        $isPrivateEsiAction = false;
+        $currentActionArray = explode('_', Mage::app()->getFrontController()->getAction()->getFullActionName());
+        $routesArray = explode("\n", Mage::getStoreConfig('turpentine_vcl/private_esi/routes'));
+
+        foreach($routesArray as $route) {
+            $route = trim($route);
+            if($isPrivateEsiAction || $route == '') {
+                continue;
+            }
+            $routeActionArray = explode('/', $route);
+            if($currentActionArray[0] == $routeActionArray[0]) { // If module matches
+                $isPrivateEsiAction = true;
+            }
+            if($isPrivateEsiAction && isset($routeActionArray[1]) && $currentActionArray[1] != $routeActionArray[1] && $routeActionArray[1] != '') { // If controller matches
+                $isPrivateEsiAction = false;
+            }
+            if($isPrivateEsiAction && isset($routeActionArray[2]) && $currentActionArray[2] != $routeActionArray[2] && $routeActionArray[1] != '') { // If action matches
+                $isPrivateEsiAction = false;
+            }
+        }
+
+        return $isPrivateEsiAction;
+    }
+
+    /**
+     * Add a cookie to tell Varnish it must now use private ESI
+     * when we are on a page for which it is required
+     *
+     * @return null
+     */
+    public function addPrivateEsiCookie()
+    {
+        Mage::getModel('core/cookie')->set('private_esi', 1, null, null, null, null, false);
+    }
 }

@@ -94,22 +94,28 @@ class Nexcessnet_Turpentine_Model_Observer_Varnish extends Varien_Event_Observer
     }
 
     /**
-     * Add cookie on customer login
+     * Add a cookie to tell Varnish it must now use private ESI
+     * This is for controller actions without layout
      *
      * @return null
      */
-    public function customerLogin()
+    public function addPrivateEsiCookie()
     {
-        Mage::getModel('core/cookie')->set('logged_in', 1);
+        Mage::helper('turpentine/varnish')->addPrivateEsiCookie();
     }
 
     /**
-     * Remove cookie on customer logout
+     * Add a cookie to tell Varnish it must now use private ESI
+     * This is for controller actions with layout
      *
      * @return null
      */
-    public function customerLogout()
+    public function addPrivateEsiCookieBlock()
     {
-        Mage::getModel('core/cookie')->delete('logged_in');
+        if(Mage::helper('turpentine/varnish')->isPrivateEsiAction()) {
+            $layout = Mage::app()->getLayout();
+            $cookieBlock = $layout->createBlock('Mage_Core_Block_Template', 'private_esi_cookie', array('template' => 'turpentine/private-esi-cookie.phtml'));
+            $layout->getBlock('before_body_end')->append($cookieBlock);
+        }
     }
 }

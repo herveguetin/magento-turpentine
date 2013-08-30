@@ -245,7 +245,7 @@ sub vcl_hash {
     }
 
     if (req.http.X-Varnish-Esi-Access == "private" &&
-            req.http.Cookie ~ "frontend=" && req.http.Cookie ~ "logged_in=") {
+            req.http.Cookie ~ "frontend=" && req.http.Cookie ~ "private_esi=") {
         hash_data(regsub(req.http.Cookie, "^.*?frontend=([^;]*);*.*$", "\1"));
         {{advanced_session_validation}}
 
