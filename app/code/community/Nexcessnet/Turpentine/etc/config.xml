@@ -77,7 +77,6 @@
                 <enable>1</enable>
                 <!-- Do not indent CDATA content -->
                 <routes><![CDATA[
-catalog/category/view
 catalog/product/view
                 ]]></routes>
             </private_esi>
